@@ -6,7 +6,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const { email } = req.body;
+  const { email } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   if (!email || typeof email !== 'string') {
     res.status(400).json({ error: 'Email is required' });
     return;
