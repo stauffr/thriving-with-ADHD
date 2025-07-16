@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 
+// Add Vite type for import.meta.env
+interface ImportMetaEnv {
+  VITE_EMAIL_OCTOPUS_API_KEY: string;
+  VITE_EMAIL_OCTOPUS_LIST_ID: string;
+}
+interface ImportMeta {
+  env: ImportMetaEnv;
+}
+
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const EMAIL_OCTOPUS_API_KEY = 'eo_c0a991cefb7a2e061b7f20d65f62a53a23aa5538cf939af86fd5d24364e058e0'; // Added your EmailOctopus API key
-  const EMAIL_OCTOPUS_LIST_ID = 'd7c0010e-6245-11f0-81c0-51be413765d6'; // Set your EmailOctopus List ID
+  const EMAIL_OCTOPUS_API_KEY = import.meta.env.VITE_EMAIL_OCTOPUS_API_KEY || '';
+  const EMAIL_OCTOPUS_LIST_ID = import.meta.env.VITE_EMAIL_OCTOPUS_LIST_ID || '';
 
   async function subscribeToEmailOctopus(email: string) {
     const res = await fetch(`https://emailoctopus.com/api/1.6/lists/${EMAIL_OCTOPUS_LIST_ID}/contacts`, {
@@ -140,7 +149,7 @@ const SignupPage: React.FC = () => {
           .card-illustration { width: 80px !important; height: 80px !important; font-size: 60px !important; }
           .header h1 { font-size: 2em !important; }
           .signup-card { padding: 30px !important; }
-          .signup-card h2 { font-size: 1.6em !important; }
+          .signup-card h2 { fontSize: 1.6em !important; }
         }
       `}</style>
     </div>
