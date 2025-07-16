@@ -1,4 +1,5 @@
-const fetch = require('node-fetch');
+// Use dynamic import for node-fetch to support ESM
+const fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
 
 export default async function(req, res) {
   if (req.method !== 'POST') {
