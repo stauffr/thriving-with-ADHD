@@ -13,23 +13,14 @@ export default async function(req, res) {
     return;
   }
 
-  const apiKey = process.env.EMAIL_OCTOPUS_API_KEY;
-  const listId = process.env.EMAIL_OCTOPUS_LIST_ID;
-
-  if (!apiKey || !listId) {
-    res.status(500).json({ error: 'Missing EmailOctopus API key or List ID' });
-    return;
-  }
-
   try {
-    const response = await fetch(`https://emailoctopus.com/api/1.6/lists/${listId}/contacts`, {
+    const response = await fetch('https://eocampaign1.com/api/forms/ebf614bc-625c-11f0-ab08-f51526c9c4c3/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-Api-Key': apiKey || '',
       },
-      body: JSON.stringify({ email_address: email, status: 'SUBSCRIBED' }),
+      body: JSON.stringify({ email }),
     });
     const text = await response.text();
     let data;
