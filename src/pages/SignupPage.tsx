@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,11 +16,25 @@ const SignupPage: React.FC = () => {
       return;
     }
     setLoading(true);
-    // Instead of API call, just show submitted state
-    setTimeout(() => {
+    try {
+      const res = await fetch('https://eocampaign1.com/api/forms/ebf614bc-625c-11f0-ab08-f51526c9c4c3/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
       setSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
