@@ -26,13 +26,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-Api-Key': apiKey,
+        'X-Api-Key': apiKey || '',
       },
       body: JSON.stringify({ email_address: email, status: 'SUBSCRIBED' }),
     });
-    const data = await response.json();
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { raw: text };
+    }
     if (!response.ok) {
-      res.status(response.status).json({ error: data.error?.message || 'Failed to subscribe' });
+      res.status(response.status).json({ error: data.error?.message || data.raw || 'Failed to subscribe' });
       return;
     }
     res.status(200).json({ success: true });
