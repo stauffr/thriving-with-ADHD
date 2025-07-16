@@ -19,20 +19,18 @@ const SignupPage: React.FC = () => {
   const EMAIL_OCTOPUS_LIST_ID = import.meta.env.VITE_EMAIL_OCTOPUS_LIST_ID || '';
 
   async function subscribeToEmailOctopus(email: string) {
-    const res = await fetch(`https://emailoctopus.com/api/1.6/lists/${EMAIL_OCTOPUS_LIST_ID}/contacts`, {
+    const res = await fetch('/api/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Api-Key': EMAIL_OCTOPUS_API_KEY,
       },
-      body: JSON.stringify({ email_address: email, status: 'SUBSCRIBED' }),
+      body: JSON.stringify({ email }),
     });
+    const data = await res.json();
     if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error?.message || 'Failed to subscribe');
+      throw new Error(data.error || 'Failed to subscribe');
     }
-    return res.json();
+    return data;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
