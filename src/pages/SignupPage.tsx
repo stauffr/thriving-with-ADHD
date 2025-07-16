@@ -1,37 +1,10 @@
-import React, { useState, useEffect } from 'react';
-
-// Add Vite type for import.meta.env
-interface ImportMetaEnv {
-  VITE_EMAIL_OCTOPUS_API_KEY: string;
-  VITE_EMAIL_OCTOPUS_LIST_ID: string;
-}
-interface ImportMeta {
-  env: ImportMetaEnv;
-}
+import React, { useState } from 'react';
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const EMAIL_OCTOPUS_API_KEY = import.meta.env.VITE_EMAIL_OCTOPUS_API_KEY || '';
-  const EMAIL_OCTOPUS_LIST_ID = import.meta.env.VITE_EMAIL_OCTOPUS_LIST_ID || '';
-
-  async function subscribeToEmailOctopus(email: string) {
-    const res = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || 'Failed to subscribe');
-    }
-    return data;
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +16,11 @@ const SignupPage: React.FC = () => {
       return;
     }
     setLoading(true);
-    try {
-      await subscribeToEmailOctopus(email);
+    // Instead of API call, just show submitted state
+    setTimeout(() => {
       setSubmitted(true);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
       setLoading(false);
-    }
+    }, 1000);
   };
 
   return (
