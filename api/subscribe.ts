@@ -45,7 +45,7 @@ export default async function handler(
     console.log('List ID:', EMAIL_OCTOPUS_LIST_ID);
 
     // Use EmailOctopus API v2 to create a contact
-    const apiUrl = `https://emailoctopus.com/api/v2/lists/${EMAIL_OCTOPUS_LIST_ID}/contacts`;
+    const apiUrl = `https://api.emailoctopus.com/lists/${EMAIL_OCTOPUS_LIST_ID}/contacts`;
     console.log('API URL:', apiUrl);
 
     const requestBody = {
@@ -63,8 +63,23 @@ export default async function handler(
       body: JSON.stringify(requestBody),
     });
 
-    const responseData = await emailOctopusResponse.json();
     console.log('EmailOctopus response status:', emailOctopusResponse.status);
+    console.log('EmailOctopus response headers:', Object.fromEntries(emailOctopusResponse.headers));
+    
+    // Check if the response is HTML (which means an error page)
+    const contentType = emailOctopusResponse.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    if (contentType && contentType.includes('text/html')) {
+      const htmlResponse = await emailOctopusResponse.text();
+      console.log('HTML response (first 500 chars):', htmlResponse.substring(0, 500));
+      return response.status(emailOctopusResponse.status).json({
+        error: 'EmailOctopus API returned HTML instead of JSON',
+        details: `Status: ${emailOctopusResponse.status}, Content-Type: ${contentType}`
+      });
+    }
+
+    const responseData = await emailOctopusResponse.json();
     console.log('EmailOctopus response data:', responseData);
 
     if (!emailOctopusResponse.ok) {
