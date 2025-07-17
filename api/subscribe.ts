@@ -12,7 +12,17 @@ export default async function handler(
 
   // Check if API key and list ID are configured
   if (!EMAIL_OCTOPUS_API_KEY || !EMAIL_OCTOPUS_LIST_ID) {
-    return response.status(500).json({ error: 'Server configuration error' });
+    console.error('Missing environment variables:', {
+      apiKey: !!EMAIL_OCTOPUS_API_KEY,
+      listId: !!EMAIL_OCTOPUS_LIST_ID
+    });
+    return response.status(500).json({ 
+      error: 'Server configuration error',
+      details: {
+        apiKey: !!EMAIL_OCTOPUS_API_KEY,
+        listId: !!EMAIL_OCTOPUS_LIST_ID
+      }
+    });
   }
 
   const { email } = request.body;
@@ -79,9 +89,11 @@ export default async function handler(
 
   } catch (error) {
     console.error('Subscription error:', error);
+    console.error('Error stack:', error.stack);
     return response.status(500).json({ 
       error: 'Internal server error',
-      details: error.message 
+      details: error.message,
+      stack: error.stack
     });
   }
 }
