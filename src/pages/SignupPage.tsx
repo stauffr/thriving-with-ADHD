@@ -17,18 +17,24 @@ const SignupPage: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch('https://eocampaign1.com/api/forms/ebf614bc-625c-11f0-ab08-f51526c9c4c3/subscribe', {
+      const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
+      
       const data = await res.json();
+      
       if (!res.ok) {
+        if (res.status === 409) {
+          throw new Error('This email is already subscribed!');
+        }
+        console.error('API Error:', data);
         throw new Error(data.error || 'Failed to subscribe');
       }
+      
       setSubmitted(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
